@@ -7,4 +7,4 @@ nltk
 pandas
 scikit-learn
 pdf2img
-
+PyMuPDF
