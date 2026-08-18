@@ -1,0 +1,362 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ article["title"] }} - NewsScope AI
+{% endblock %}
+
+
+{% block content %}
+
+<div class="container py-5">
+
+    <!-- =====================================================
+         ARTICLE HEADER
+    ====================================================== -->
+
+    <div class="page-heading mb-5">
+
+        <span class="eyebrow">
+            ANALYSIS RESULT
+        </span>
+
+        <h1 class="article-main-title">
+            {{ article["title"] }}
+        </h1>
+
+        <p>
+            {{ article["filename"] }}
+            ·
+            {{ article["created_at"] }}
+        </p>
+
+    </div>
+
+
+    <!-- =====================================================
+         RESULT CARDS
+    ====================================================== -->
+
+    <div class="row g-4 mb-5">
+
+
+        <!-- CATEGORY -->
+
+        <div class="col-md-6 col-xl-3">
+
+            <div class="result-card">
+
+                <i class="bi bi-tag"></i>
+
+                <span>
+                    CATEGORY
+                </span>
+
+                <h3>
+                    {{ article["category"] or "General" }}
+                </h3>
+
+            </div>
+
+        </div>
+
+
+        <!-- SENTIMENT -->
+
+        <div class="col-md-6 col-xl-3">
+
+            <div class="result-card">
+
+                <i class="bi bi-emoji-smile"></i>
+
+                <span>
+                    SENTIMENT
+                </span>
+
+                <h3
+                    class="
+                    {% if article['sentiment'] == 'Positive' %}
+                        text-success
+                    {% elif article['sentiment'] == 'Negative' %}
+                        text-danger
+                    {% endif %}
+                    "
+                >
+                    {{ article["sentiment"] or "Neutral" }}
+                </h3>
+
+            </div>
+
+        </div>
+
+
+        <!-- CONFIDENCE -->
+
+        <div class="col-md-6 col-xl-3">
+
+            <div class="result-card">
+
+                <i class="bi bi-speedometer2"></i>
+
+                <span>
+                    CONFIDENCE
+                </span>
+
+                <h3>
+                    {{ article["confidence"] or 0 }}%
+                </h3>
+
+                <div class="progress mt-2">
+
+    <div
+        class="progress-bar confidence-bar"
+        data-confidence="{{ article['confidence'] or 0 }}"
+    ></div>
+
+</div>
+
+            </div>
+
+        </div>
+
+
+        <!-- WORD COUNT -->
+
+        <div class="col-md-6 col-xl-3">
+
+            <div class="result-card">
+
+                <i class="bi bi-file-text"></i>
+
+                <span>
+                    WORD COUNT
+                </span>
+
+                <h3>
+                    {{ article["word_count"] or 0 }}
+                </h3>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         SUMMARY
+    ====================================================== -->
+
+    <div class="section-card mb-4">
+
+        <span class="eyebrow">
+            ARTICLE SUMMARY
+        </span>
+
+        <h3 class="mb-4">
+            Summary
+        </h3>
+
+        <div class="article-summary">
+
+            {{ article["summary"] or "No summary available." }}
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         MAIN POINTS
+    ====================================================== -->
+
+    <div class="section-card h-100">
+
+    <span class="eyebrow">KEY INSIGHTS</span>
+
+    <h3 class="mb-4">Main Points</h3>
+
+    <div class="main-points">
+
+        {% if article["main_points"] %}
+
+            {% for point in article["main_points"] %}
+
+                <div class="point-item">
+
+                    <span>
+                        <i class="bi bi-check2"></i>
+                    </span>
+
+                    <p>{{ point }}</p>
+
+                </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <div class="empty-state">
+
+                <i class="bi bi-info-circle"></i>
+
+                <p>
+                    No main points available.
+                </p>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+
+    <!-- =====================================================
+         SENTIMENT ANALYSIS
+    ====================================================== -->
+
+    <div class="section-card mb-4">
+
+        <span class="eyebrow">
+            SENTIMENT ANALYSIS
+        </span>
+
+        <h3 class="mb-4">
+            Sentiment Scores
+        </h3>
+
+
+        <!-- POSITIVE -->
+
+        <div class="score-row mb-4">
+
+            <div class="d-flex justify-content-between">
+
+                <span>
+                    Positive
+                </span>
+
+                <strong class="text-success">
+                    {{ article["positive_score"] or 0 }}
+                </strong>
+
+            </div>
+
+
+            <div class="progress">
+
+    <div
+        class="progress-bar bg-success score-bar"
+        data-score="{{ article['positive_score'] or 0 }}"
+    ></div>
+
+</div>
+        </div>
+
+
+        <!-- NEGATIVE -->
+
+        <div class="score-row">
+
+            <div class="d-flex justify-content-between">
+
+                <span>
+                    Negative
+                </span>
+
+                <strong class="text-danger">
+                    {{ article["negative_score"] or 0 }}
+                </strong>
+
+            </div>
+
+
+            <div class="progress">
+
+    <div
+        class="progress-bar bg-danger score-bar"
+        data-score="{{ article['negative_score'] or 0 }}"
+    ></div>
+
+</div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         FULL ARTICLE READER
+    ====================================================== -->
+
+    <div class="section-card article-reader">
+
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+
+            <div>
+
+                <span class="eyebrow">
+                    ORIGINAL CONTENT
+                </span>
+
+                <h3 class="mb-0">
+                    Full Article
+                </h3>
+
+            </div>
+
+
+            <span class="badge-soft">
+                {{ article["filename"].split(".")[-1].upper() }}
+            </span>
+
+        </div>
+
+
+        <div class="article-preview">
+
+            {{ article["text"] }}
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         BUTTONS
+    ====================================================== -->
+
+    <div class="d-flex justify-content-center flex-wrap gap-3 mt-5">
+
+        <a
+            href="{{ url_for('history') }}"
+            class="btn btn-outline-light px-4"
+        >
+            <i class="bi bi-clock-history me-2"></i>
+            History
+        </a>
+
+
+        <a
+            href="{{ url_for('search') }}"
+            class="btn btn-outline-light px-4"
+        >
+            <i class="bi bi-search me-2"></i>
+            Search
+        </a>
+
+
+        <a
+            href="{{ url_for('upload') }}"
+            class="btn btn-primary px-4"
+        >
+            <i class="bi bi-cloud-arrow-up me-2"></i>
+            New Analysis
+        </a>
+
+    </div>
+
+</div>
+
+{% endblock %}

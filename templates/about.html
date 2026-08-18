@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}About Project - NewsScope AI{% endblock %}
+{% block content %}
+<div class="container py-5">
+<div class="about-hero text-center"><span class="eyebrow">PROJECT OVERVIEW</span><h1>About <span>NewsScope AI</span></h1><p class="head-description">An intelligent news article analysis platform designed to transform unstructured articles into useful insights.</p></div>
+<div class="row g-4 mt-5">
+<div class="col-lg-7"><div class="section-card h-100"><span class="eyebrow">PROJECT DESCRIPTION</span><h3>What is NewsScope AI?</h3><p class="about-text">NewsScope AI is a Python Flask-based full-stack web application that allows users to upload news articles and automatically analyze their content.</p><p class="about-text">The system extracts text from TXT, PDF and PNG files, performs sentiment analysis, identifies the article category, extracts important points and stores the analysis results in a SQLite database.</p><p class="about-text">Users can search, view and manage previously analyzed articles through a professional web dashboard.</p></div></div>
+<div class="col-lg-5"><div class="section-card h-100"><span class="eyebrow">TECHNOLOGY STACK</span><div class="tech-list">{% for icon,name in [("bi-filetype-py","Python"),("bi-server","Flask"),("bi-database","SQLite"),("bi-bootstrap","Bootstrap"),("bi-filetype-html","HTML5"),("bi-filetype-css","CSS3"),("bi-filetype-js","JavaScript"),("bi-eye","OCR")] %}<div><i class="bi {{ icon }}"></i>{{ name }}</div>{% endfor %}</div></div></div>
+</div>
+<div class="section-card mt-4"><span class="eyebrow">PROBLEM STATEMENT</span><h3>Why was this project created?</h3><p class="about-text">News articles are produced in large quantities and can be difficult to manually classify, understand and compare. NewsScope AI provides a centralized system that extracts and analyzes article information automatically.</p></div>
+<div class="row g-4 mt-1">
+<div class="col-lg-6"><div class="section-card h-100"><span class="eyebrow">OBJECTIVES</span><h3>Project Goals</h3><ul class="feature-list"><li>Upload news articles easily.</li><li>Extract text from different file types.</li><li>Analyze article sentiment.</li><li>Classify articles by category.</li><li>Identify important article points.</li><li>Store analysis results.</li><li>Search and manage historical analyses.</li></ul></div></div>
+<div class="col-lg-6"><div class="section-card h-100"><span class="eyebrow">KEY FEATURES</span><h3>What can users do?</h3><ul class="feature-list"><li>TXT, PDF and PNG upload.</li><li>PDF text extraction.</li><li>PNG OCR processing.</li><li>Article preview.</li><li>Sentiment detection.</li><li>Category classification.</li><li>Main-point extraction.</li><li>History and deletion.</li><li>Category and sentiment search.</li></ul></div></div>
+</div>
+<div class="section-card mt-4"><span class="eyebrow">SYSTEM WORKFLOW</span><h3>How NewsScope AI works</h3><div class="workflow">{% for n,t,p in [("01","Upload","Upload TXT, PDF or PNG."),("02","Extract","Extract or OCR article text."),("03","Preview","Review extracted content."),("04","Analyze","Detect category and sentiment."),("05","Store","Save results to SQLite."),("06","Search","Find previous analyses.")] %}<div><span>{{ n }}</span><strong>{{ t }}</strong><p>{{ p }}</p></div>{% endfor %}</div></div>
+<div class="section-card mt-4"><span class="eyebrow">FUTURE ENHANCEMENTS</span><h3>Future Development</h3><div class="row g-3">{% for x in ["AI-generated summaries","Advanced NLP models","User authentication","Cloud database integration","Article comparison","Interactive analytics"] %}<div class="col-md-6"><div class="future-item">{{ x }}</div></div>{% endfor %}</div></div>
+</div>
+{% endblock %}

@@ -1,0 +1,10 @@
+Flask
+PyPDF2
+Pillow
+pytesseract
+mysql-connector-python
+nltk
+pandas
+scikit-learn
+pdf2img
+

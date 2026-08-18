@@ -1,0 +1,370 @@
+{% extends "base.html" %}
+
+{% block title %}
+Dashboard - NewsScope AI
+{% endblock %}
+
+
+{% block content %}
+
+<div class="container py-5">
+
+
+    <!-- =====================================================
+         HERO
+    ====================================================== -->
+
+    <div class="hero-heading mb-5">
+
+        <span class="eyebrow">
+            AI NEWS INTELLIGENCE
+        </span>
+
+        <h1>
+            Analysis <span>Dashboard</span>
+        </h1>
+
+        <p>
+            Monitor your analyzed articles, categories,
+            sentiment insights and recent activity.
+        </p>
+
+    </div>
+
+
+    <!-- =====================================================
+         STATISTICS
+    ====================================================== -->
+
+    <div class="row g-4 mb-5">
+
+        <!-- Total -->
+
+        <div class="col-md-6 col-xl-3">
+
+            <div class="stat-card">
+
+                <div class="stat-icon blue">
+                    <i class="bi bi-file-earmark-text"></i>
+                </div>
+
+                <div class="stat-number">
+                    {{ statistics.total }}
+                </div>
+
+                <div class="stat-label">
+                    Total Articles
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Positive -->
+
+        <div class="col-md-6 col-xl-3">
+
+            <div class="stat-card">
+
+                <div class="stat-icon green">
+                    <i class="bi bi-emoji-smile"></i>
+                </div>
+
+                <div class="stat-number">
+                    {{ statistics.positive }}
+                </div>
+
+                <div class="stat-label">
+                    Positive
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Negative -->
+
+        <div class="col-md-6 col-xl-3">
+
+            <div class="stat-card">
+
+                <div class="stat-icon red">
+                    <i class="bi bi-emoji-frown"></i>
+                </div>
+
+                <div class="stat-number">
+                    {{ statistics.negative }}
+                </div>
+
+                <div class="stat-label">
+                    Negative
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Neutral -->
+
+        <div class="col-md-6 col-xl-3">
+
+            <div class="stat-card">
+
+                <div class="stat-icon purple">
+                    <i class="bi bi-dash-circle"></i>
+                </div>
+
+                <div class="stat-number">
+                    {{ statistics.neutral }}
+                </div>
+
+                <div class="stat-label">
+                    Neutral
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         QUICK ACTIONS
+    ====================================================== -->
+
+    <div class="section-card mb-5">
+
+        <span class="eyebrow">
+            QUICK ACTIONS
+        </span>
+
+        <h3>
+            Continue your analysis
+        </h3>
+
+        <div class="d-flex flex-wrap gap-3 mt-3">
+
+            <a
+                href="{{ url_for('upload') }}"
+                class="btn btn-primary px-4"
+            >
+                <i class="bi bi-cloud-arrow-up me-2"></i>
+                Upload & Analyze
+            </a>
+
+
+            <a
+                href="{{ url_for('history') }}"
+                class="btn btn-outline-light px-4"
+            >
+                View History
+            </a>
+
+
+            <a
+                href="{{ url_for('search') }}"
+                class="btn btn-outline-light px-4"
+            >
+                Search Articles
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         CATEGORY + RECENT ANALYSES
+    ====================================================== -->
+
+    <div class="row g-4">
+
+
+        <!-- =================================================
+             CATEGORY
+        ================================================== -->
+
+        <div class="col-lg-5">
+
+            <div class="section-card h-100">
+
+                <span class="eyebrow">
+                    CLASSIFICATION
+                </span>
+
+                <h3 class="mb-4">
+                    Articles by Category
+                </h3>
+
+
+                {% if statistics.categories %}
+
+                    {% for category, count in statistics.categories.items() %}
+
+                    <div class="category-row mb-4">
+
+                        <div class="d-flex justify-content-between mb-2">
+
+                            <span>
+                                {{ category }}
+                            </span>
+
+                            <strong>
+                                {{ count }}
+                            </strong>
+
+                        </div>
+
+
+                        <div class="progress">
+    <div
+        class="progress-bar category-progress"
+        role="progressbar"
+        data-count="{{ count }}"
+        data-total="{{ statistics.total }}"
+        aria-valuenow="{{ count }}"
+        aria-valuemin="0"
+        aria-valuemax="{{ statistics.total }}"
+    ></div>
+</div>
+
+                    </div>
+
+                    {% endfor %}
+
+
+                {% else %}
+
+                    <div class="empty-state">
+
+                        <i class="bi bi-bar-chart"></i>
+
+                        <p>
+                            No analyzed articles yet.
+                        </p>
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             RECENT ANALYSES
+        ================================================== -->
+
+        <div class="col-lg-7">
+
+            <div class="section-card h-100">
+
+
+                <div class="d-flex justify-content-between align-items-center mb-4">
+
+                    <div>
+
+                        <span class="eyebrow">
+                            RECENT ACTIVITY
+                        </span>
+
+                        <h3 class="mb-0">
+                            Recent Analyses
+                        </h3>
+
+                    </div>
+
+
+                    <a
+                        href="{{ url_for('history') }}"
+                        class="small-link"
+                    >
+                        View all
+                    </a>
+
+                </div>
+
+
+                {% if recent_articles %}
+
+
+                    {% for article in recent_articles %}
+
+                    <div class="recent-item">
+
+                        <div>
+
+                            <h6>
+
+                                {% if article["title"] %}
+
+                                    {{ article["title"] }}
+
+                                {% else %}
+
+                                    {{ article["filename"] }}
+
+                                {% endif %}
+
+                            </h6>
+
+
+                            <span>
+
+                                {{ article["category"] or "General" }}
+
+                                ·
+
+                                {{ article["sentiment"] or "Neutral" }}
+
+                            </span>
+
+                        </div>
+
+
+                        <a
+                            href="{{ url_for('article', article_id=article['id']) }}"
+                            class="icon-btn"
+                            title="View article"
+                        >
+
+                            <i class="bi bi-arrow-up-right"></i>
+
+                        </a>
+
+                    </div>
+
+                    {% endfor %}
+
+
+                {% else %}
+
+
+                    <div class="empty-state">
+
+                        <i class="bi bi-inbox"></i>
+
+                        <p>
+                            Upload your first article
+                            to see it here.
+                        </p>
+
+                    </div>
+
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

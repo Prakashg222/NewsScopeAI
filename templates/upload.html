@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Analyze Article - NewsScope AI{% endblock %}
+{% block content %}
+<div class="container py-5">
+<div class="text-center page-heading">
+    <span class="eyebrow">AI ARTICLE ANALYSIS</span>
+    <h1>
+        Upload Article
+    </h1>
+    <p class="upload-description">
+        Upload a TXT, PDF or PNG article and extract its content for analysis.
+    </p>
+</div>
+<div class="row justify-content-center"><div class="col-xl-8"><div class="upload-card">
+<div class="upload-symbol"><i class="bi bi-cloud-arrow-up"></i></div>
+<h3>Choose Article File</h3><p class="text-secondary">Supported formats: TXT · PDF · PNG</p>
+<form action="{{ url_for('upload') }}" method="POST" enctype="multipart/form-data">
+<label for="file" class="drop-zone"><i class="bi bi-file-earmark-arrow-up"></i><strong>Click to select your article</strong><span>TXT, PDF or PNG</span><input type="file" id="file" name="file" accept=".txt,.pdf,.png" required hidden></label>
+<div id="selectedFile" class="selected-file d-none"><i class="bi bi-file-earmark-text"></i><span>No file selected</span></div>
+<button type="submit" class="btn btn-primary btn-lg w-100 mt-4"><i class="bi bi-cloud-upload me-2"></i>Upload Article</button>
+</form>
+</div></div></div>
+<div class="row g-4 mt-4">
+{% for n, icon, title, text in [
+("01","bi-cloud-arrow-up","Upload","Upload your TXT, PDF or PNG article."),
+("02","bi-file-text","Preview","Review the extracted article text."),
+("03","bi-stars","Analyze","Generate article insights.")
+] %}
+<div class="col-md-4"><div class="process-card"><span>{{ n }}</span><i class="bi {{ icon }}"></i><h5>{{ title }}</h5><p>{{ text }}</p></div></div>
+{% endfor %}
+</div>
+</div>
+{% endblock %}

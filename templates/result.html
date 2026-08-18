@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Preview Article - NewsScope AI{% endblock %}
+{% block content %}
+<div class="container py-5">
+<div class="page-heading mb-5"><span class="eyebrow">ARTICLE PREVIEW</span><h1>Review before analysis</h1><p>Your file has been uploaded successfully. Review the extracted content and start analysis.</p></div>
+<div class="row g-4">
+<div class="col-lg-4"><div class="section-card sticky-lg-top" style="top:100px;">
+<div class="file-preview-icon"><i class="bi {% if pending['file_type']=='PNG' %}bi-image{% elif pending['file_type']=='PDF' %}bi-file-earmark-pdf{% else %}bi-file-earmark-text{% endif %}"></i></div>
+<span class="eyebrow">UPLOADED FILE</span><h3 class="mt-2">{{ pending["filename"] }}</h3>
+<div class="file-meta"><div><span>Type</span><strong>{{ pending["file_type"] }}</strong></div><div><span>Status</span><strong class="text-success">Ready</strong></div></div>
+<form action="{{ url_for('analyze', pending_id=pending['id']) }}" method="POST"><button type="submit" class="btn btn-primary w-100 mt-4 btn-lg"><i class="bi bi-stars me-2"></i>Analyze Article</button></form>
+<a href="{{ url_for('upload') }}" class="btn btn-outline-light w-100 mt-2">Upload Another</a>
+</div></div>
+<div class="col-lg-8"><div class="section-card"><div class="d-flex justify-content-between align-items-center mb-4"><div><span class="eyebrow">EXTRACTED CONTENT</span><h3 class="mb-0">Article Text Preview</h3></div><span class="badge-soft">{{ pending["file_type"] }}</span></div><div class="article-preview">{{ pending["text"] }}</div></div></div>
+</div>
+</div>
+{% endblock %}

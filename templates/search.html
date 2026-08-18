@@ -1,0 +1,307 @@
+{% extends "base.html" %}
+
+{% block title %}
+Search - NewsScope AI
+{% endblock %}
+
+
+{% block content %}
+
+<div class="container py-5">
+
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+
+    <div class="page-heading mb-5">
+
+        <span class="eyebrow">
+            ARTICLE SEARCH
+        </span>
+
+        <h1>
+            Search Articles
+        </h1>
+
+        <p>
+            Search your analyzed articles by title,
+            content, category or sentiment.
+        </p>
+
+    </div>
+
+
+    <!-- =====================================================
+         SEARCH BOX
+    ====================================================== -->
+
+    <div class="section-card mb-5">
+
+        <form
+            action="{{ url_for('search') }}"
+            method="GET"
+        >
+
+            <div class="input-group">
+
+                <input
+                    type="search"
+                    name="q"
+                    value="{{ query }}"
+                    class="form-control"
+                    placeholder="Search articles..."
+                    autocomplete="off"
+                >
+
+                <button
+                    type="submit"
+                    class="btn btn-primary px-4"
+                >
+
+                    <i class="bi bi-search me-2"></i>
+
+                    Search
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+    <!-- =====================================================
+         SEARCH RESULTS
+    ====================================================== -->
+
+    {% if query %}
+
+        {% if results %}
+
+            <div class="d-flex justify-content-between align-items-center mb-4">
+
+                <div>
+
+                    <span class="eyebrow">
+                        SEARCH RESULTS
+                    </span>
+
+                    <h3 class="mb-0">
+
+                        {{ results|length }}
+
+                        result{% if results|length != 1 %}s{% endif %}
+
+                    </h3>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 RESULTS
+            ================================================== -->
+
+            <div class="row g-4">
+
+                {% for article in results %}
+
+                <div class="col-12">
+
+                    <div class="section-card search-result-card">
+
+                        <div class="d-flex justify-content-between align-items-start gap-3">
+
+
+                            <!-- ARTICLE INFORMATION -->
+
+                            <div class="flex-grow-1">
+
+                                <span class="eyebrow">
+                                    {{ article["category"] or "General" }}
+                                </span>
+
+
+                                <h3 class="search-result-title">
+
+                                    <a
+                                        href="{{ url_for('article', article_id=article['id']) }}"
+                                    >
+
+                                        {% if article["title"] %}
+
+                                            {{ article["title"] }}
+
+                                        {% else %}
+
+                                            Untitled Article
+
+                                        {% endif %}
+
+                                    </a>
+
+                                </h3>
+
+
+                                <p class="search-result-summary">
+
+                                    {% if article["summary"] %}
+
+                                        {{ article["summary"] }}
+
+                                    {% else %}
+
+                                        {{ article["text"][:300] }}
+
+                                        {% if article["text"]|length > 300 %}
+                                            ...
+                                        {% endif %}
+
+                                    {% endif %}
+
+                                </p>
+
+
+                                <div class="d-flex flex-wrap gap-3 mt-3">
+
+                                    <span class="badge-soft">
+
+                                        {{ article["category"] or "General" }}
+
+                                    </span>
+
+
+                                    <span
+                                        class="sentiment
+                                        {% if article['sentiment'] == 'Positive' %}
+                                            positive
+                                        {% elif article['sentiment'] == 'Negative' %}
+                                            negative
+                                        {% else %}
+                                            neutral
+                                        {% endif %}
+                                        "
+                                    >
+
+                                        {{ article["sentiment"] or "Neutral" }}
+
+                                    </span>
+
+
+                                    <small>
+
+                                        {{ article["created_at"] }}
+
+                                    </small>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- VIEW BUTTON -->
+
+                            <a
+                                href="{{ url_for('article', article_id=article['id']) }}"
+                                class="icon-btn"
+                                title="Open article"
+                            >
+
+                                <i class="bi bi-arrow-up-right"></i>
+
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+
+        {% else %}
+
+
+            <!-- =================================================
+                 NO RESULTS
+            ================================================== -->
+
+            <div class="empty-large">
+
+                <div class="empty-icon">
+
+                    <i class="bi bi-search"></i>
+
+                </div>
+
+
+                <h3>
+                    No Articles Found
+                </h3>
+
+
+                <p>
+
+                    No article matched
+
+                    <strong>
+                        "{{ query }}"
+                    </strong>
+
+                </p>
+
+
+                <a
+                    href="{{ url_for('history') }}"
+                    class="btn btn-outline-light"
+                >
+
+                    View All Articles
+
+                </a>
+
+            </div>
+
+
+        {% endif %}
+
+
+    {% else %}
+
+
+        <!-- =================================================
+             INITIAL SEARCH STATE
+        ================================================== -->
+
+        <div class="empty-large">
+
+            <div class="empty-icon">
+
+                <i class="bi bi-search"></i>
+
+            </div>
+
+
+            <h3>
+                Search Your Articles
+            </h3>
+
+
+            <p>
+                Enter a title, keyword, category,
+                sentiment or phrase above.
+            </p>
+
+        </div>
+
+
+    {% endif %}
+
+</div>
+
+{% endblock %}
