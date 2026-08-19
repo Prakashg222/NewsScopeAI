@@ -11,7 +11,8 @@ import os
 import sqlite3
 import re
 from datetime import datetime
-from database import get_connection
+from database import get_connection, is_postgres
+from database import save_article
 from werkzeug.utils import secure_filename
 
 import pytesseract
@@ -651,99 +652,93 @@ def extract_text_from_file(
 def save_article(filename, text, analysis):
 
     connection = get_connection()
-
     cursor = connection.cursor()
 
     main_points = "\n".join(
-        analysis.get(
-            "main_points",
-            []
-        )
+        analysis.get("main_points", [])
     )
 
     created_at = datetime.now().strftime(
         "%Y-%m-%d %H:%M:%S"
     )
 
-    cursor.execute("""
-        INSERT INTO articles (
-            filename,
-            title,
-            summary,
-            text,
-            language,
-            sentiment,
-            category,
-            confidence,
-            word_count,
-            positive_score,
-            negative_score,
-            main_points,
-            created_at
-        )
-
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    """, (
-
+    values = (
         filename,
-
-        analysis.get(
-            "title",
-            "Untitled Article"
-        ),
-
-        analysis.get(
-            "summary",
-            ""
-        ),
-
+        analysis.get("title", "Untitled Article"),
+        analysis.get("summary", ""),
         text,
-
-        analysis.get(
-            "language",
-            "Unknown"
-        ),
-
-        analysis.get(
-            "sentiment",
-            "Neutral"
-        ),
-
-        analysis.get(
-            "category",
-            "General"
-        ),
-
-        analysis.get(
-            "confidence",
-            50
-        ),
-
-        analysis.get(
-            "word_count",
-            0
-        ),
-
-        analysis.get(
-            "positive_score",
-            0
-        ),
-
-        analysis.get(
-            "negative_score",
-            0
-        ),
-
+        analysis.get("language", "Unknown"),
+        analysis.get("sentiment", "Neutral"),
+        analysis.get("category", "General"),
+        analysis.get("confidence", 50),
+        analysis.get("word_count", 0),
+        analysis.get("positive_score", 0),
+        analysis.get("negative_score", 0),
         main_points,
-
         created_at
+    )
 
-    ))
+    # ==========================================
+    # POSTGRESQL - VERCEL
+    # ==========================================
+    if is_postgres():
 
-    article_id = cursor.lastrowid
+        cursor.execute("""
+            INSERT INTO articles (
+                filename,
+                title,
+                summary,
+                text,
+                language,
+                sentiment,
+                category,
+                confidence,
+                word_count,
+                positive_score,
+                negative_score,
+                main_points,
+                created_at
+            )
+            VALUES (
+                %s, %s, %s, %s, %s, %s, %s,
+                %s, %s, %s, %s, %s, %s
+            )
+            RETURNING id
+        """, values)
+
+        row = cursor.fetchone()
+        article_id = row[0]
+
+    # ==========================================
+    # SQLITE - LOCAL
+    # ==========================================
+    else:
+
+        cursor.execute("""
+            INSERT INTO articles (
+                filename,
+                title,
+                summary,
+                text,
+                language,
+                sentiment,
+                category,
+                confidence,
+                word_count,
+                positive_score,
+                negative_score,
+                main_points,
+                created_at
+            )
+            VALUES (
+                ?, ?, ?, ?, ?, ?, ?,
+                ?, ?, ?, ?, ?, ?
+            )
+        """, values)
+
+        article_id = cursor.lastrowid
 
     connection.commit()
-
     connection.close()
 
     return article_id
