@@ -1,6 +1,8 @@
 .env
 .venv/
 _pycache_/
+*.pyc
+*.db
 database/*.db
 #sqlite database
 database/*.db
