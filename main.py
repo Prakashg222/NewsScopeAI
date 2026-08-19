@@ -301,71 +301,102 @@ def generate_main_points(
 def init_database():
 
     connection = get_connection()
-
     cursor = connection.cursor()
 
+    # Create articles table
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS articles (
-
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-
             filename TEXT NOT NULL,
-
             title TEXT DEFAULT 'Untitled Article',
-
             text TEXT NOT NULL,
-
             summary TEXT DEFAULT '',
-
             language TEXT DEFAULT 'Unknown',
-
             sentiment TEXT DEFAULT 'Neutral',
-
             category TEXT DEFAULT 'General',
-
             confidence INTEGER DEFAULT 50,
-
             word_count INTEGER DEFAULT 0,
-
             positive_score INTEGER DEFAULT 0,
-
             negative_score INTEGER DEFAULT 0,
-
             main_points TEXT DEFAULT '',
-
             created_at TEXT NOT NULL
         )
     """)
 
     connection.commit()
 
-    cursor.execute("""
-        PRAGMA table_info(articles)
-    """)
+    # Get existing columns
+    cursor.execute("PRAGMA table_info(articles)")
 
     existing_columns = {
         row["name"]
         for row in cursor.fetchall()
     }
 
+    # Add missing columns to old databases
     if "title" not in existing_columns:
-
         cursor.execute("""
             ALTER TABLE articles
-            ADD COLUMN title TEXT
-            DEFAULT 'Untitled Article'
+            ADD COLUMN title TEXT DEFAULT 'Untitled Article'
         """)
 
     if "summary" not in existing_columns:
-
         cursor.execute("""
             ALTER TABLE articles
-            ADD COLUMN summary TEXT
-            DEFAULT ''
+            ADD COLUMN summary TEXT DEFAULT ''
+        """)
+
+    if "language" not in existing_columns:
+        cursor.execute("""
+            ALTER TABLE articles
+            ADD COLUMN language TEXT DEFAULT 'Unknown'
+        """)
+
+    if "sentiment" not in existing_columns:
+        cursor.execute("""
+            ALTER TABLE articles
+            ADD COLUMN sentiment TEXT DEFAULT 'Neutral'
+        """)
+
+    if "category" not in existing_columns:
+        cursor.execute("""
+            ALTER TABLE articles
+            ADD COLUMN category TEXT DEFAULT 'General'
+        """)
+
+    if "confidence" not in existing_columns:
+        cursor.execute("""
+            ALTER TABLE articles
+            ADD COLUMN confidence INTEGER DEFAULT 50
+        """)
+
+    if "word_count" not in existing_columns:
+        cursor.execute("""
+            ALTER TABLE articles
+            ADD COLUMN word_count INTEGER DEFAULT 0
+        """)
+
+    if "positive_score" not in existing_columns:
+        cursor.execute("""
+            ALTER TABLE articles
+            ADD COLUMN positive_score INTEGER DEFAULT 0
+        """)
+
+    if "negative_score" not in existing_columns:
+        cursor.execute("""
+            ALTER TABLE articles
+            ADD COLUMN negative_score INTEGER DEFAULT 0
+        """)
+
+    if "main_points" not in existing_columns:
+        cursor.execute("""
+            ALTER TABLE articles
+            ADD COLUMN main_points TEXT DEFAULT ''
         """)
 
     connection.commit()
 
+    # Get existing articles
     cursor.execute("""
         SELECT
             id,
@@ -379,44 +410,42 @@ def init_database():
 
     old_articles = cursor.fetchall()
 
+    # Update old articles
     for article in old_articles:
 
         title = article["title"]
-
         summary = article["summary"]
-
         main_points = article["main_points"]
 
+        # Generate title if missing
         if not title or not title.strip():
-
             title = generate_title(
                 article["text"],
                 article["filename"]
             )
 
+        # Generate summary if missing
         if not summary or not summary.strip():
-
             summary = generate_summary(
                 article["text"]
             )
 
+        # Generate main points if missing
         if not main_points or not main_points.strip():
 
             points = generate_main_points(
                 article["text"]
             )
 
-            main_points = "\n".join(
-                points
-            )
+            main_points = "\n".join(points)
 
+        # IMPORTANT:
+        # SQLite uses ? instead of %s
         cursor.execute("""
             UPDATE articles
-
             SET title = ?,
                 summary = ?,
                 main_points = ?
-
             WHERE id = ?
         """, (
             title,
@@ -426,12 +455,11 @@ def init_database():
         ))
 
     connection.commit()
-
     connection.close()
 
 
+# Initialize database
 init_database()
-
 
 # ============================================================
 # FILE VALIDATION
