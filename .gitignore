@@ -1,6 +1,6 @@
 .env
 .venv/
-__pycache__/
+_pycache_/
 database/*.db
 #sqlite database
 database/*.db
