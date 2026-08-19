@@ -11,7 +11,7 @@ import os
 import sqlite3
 import re
 from datetime import datetime
-
+from database import get_connection
 from werkzeug.utils import secure_filename
 
 import pytesseract
@@ -85,15 +85,7 @@ ALLOWED_EXTENSIONS = {
 # DATABASE CONNECTION
 # ============================================================
 
-def get_connection():
 
-    connection = sqlite3.connect(
-        DATABASE_PATH
-    )
-
-    connection.row_factory = sqlite3.Row
-
-    return connection
 
 
 # ============================================================
